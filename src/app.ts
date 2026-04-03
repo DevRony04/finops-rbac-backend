@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import apiRoutes from './routes';
 import { errorHandler } from './middlewares/errorHandler.middleware';
 import { sendError } from './utils/response.util';
+import { setupSwagger } from './config/swagger';
 
 const app = express();
 
@@ -38,6 +39,9 @@ app.use('/api', limiter);
 
 // Routes
 app.use('/api', apiRoutes);
+
+// Swagger Documentation
+setupSwagger(app);
 
 // Health check
 app.get('/health', (req, res) => {

@@ -96,6 +96,16 @@ You can use the seeded users to test different RBAC levels on the API endpoints.
 }
 ```
 
+## 📚 Interactive API Documentation (Swagger)
+
+This project includes interactive API documentation powered by Swagger UI.
+
+Once the server is running, you can access the interactive Swagger documentation at:
+- **Swagger UI:** `http://localhost:3000/api-docs`
+- **Swagger JSON:** `http://localhost:3000/api-docs.json`
+
+You can use the Swagger UI to explore the available endpoints, view schemas, and test API requests directly from your browser. Remember to authenticate by clicking the "Authorize" button and providing your JWT bearer token.
+
 ## 🛣️ API Documentation
 
 Responses generally follow this format:
