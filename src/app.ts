@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import apiRoutes from './routes';
+import { Request, Response, NextFunction } from 'express';
 import { errorHandler } from './middlewares/errorHandler.middleware';
 import { sendError } from './utils/response.util';
 import { setupSwagger } from './config/swagger';
@@ -44,12 +45,12 @@ app.use('/api', apiRoutes);
 setupSwagger(app);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Handle 404
-app.use((req, res) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   sendError(res, 404, 'Route not found', 'ROUTE_NOT_FOUND');
 });
 

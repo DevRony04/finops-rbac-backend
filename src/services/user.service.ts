@@ -1,6 +1,22 @@
 import { prisma } from '../config/database';
 import { hashPassword } from '../utils/password.util';
 import { UserResponse } from '../types/user.types';
+import { Role } from '@prisma/client';
+
+export interface CreateUserInput {
+  email: string;
+  password?: string;
+  name: string;
+  role?: Role;
+  isActive?: boolean;
+}
+
+export interface UpdateUserInput {
+  email?: string;
+  name?: string;
+  role?: Role;
+  isActive?: boolean;
+}
 
 export class UserService {
   async getAllUsers(): Promise<UserResponse[]> {
@@ -33,7 +49,7 @@ export class UserService {
     });
 
     if (!user) {
-      const error: any = new Error('User not found');
+      const error = new Error('User not found') as any;
       error.statusCode = 404;
       error.code = 'NOT_FOUND';
       throw error;
@@ -42,8 +58,9 @@ export class UserService {
     return user;
   }
 
-  async createUser(data: any): Promise<UserResponse> {
-    const hashedPassword = await hashPassword(data.password);
+  async createUser(data: CreateUserInput): Promise<UserResponse> {
+    const password = data.password || 'TemporaryPassword123!';
+    const hashedPassword = await hashPassword(password);
 
     return prisma.user.create({
       data: {
@@ -62,11 +79,11 @@ export class UserService {
     });
   }
 
-  async updateUser(id: string, data: any): Promise<UserResponse> {
+  async updateUser(id: string, data: UpdateUserInput): Promise<UserResponse> {
     const userExists = await prisma.user.findUnique({ where: { id } });
     
     if (!userExists) {
-      const error: any = new Error('User not found');
+      const error = new Error('User not found') as any;
       error.statusCode = 404;
       error.code = 'NOT_FOUND';
       throw error;

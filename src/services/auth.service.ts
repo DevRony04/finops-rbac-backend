@@ -3,14 +3,25 @@ import { hashPassword, comparePassword } from '../utils/password.util';
 import { generateToken } from '../utils/jwt.util';
 import { UserResponse } from '../types/user.types';
 
+export interface RegisterInput {
+  email: string;
+  password: string;
+  name: string;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
 export class AuthService {
-  async register(data: any): Promise<{ user: UserResponse; token: string }> {
+  async register(data: RegisterInput): Promise<{ user: UserResponse; token: string }> {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
 
     if (existingUser) {
-      const error: any = new Error('Email already in use');
+      const error = new Error('Email already in use') as any;
       error.statusCode = 400;
       error.code = 'EMAIL_IN_USE';
       throw error;
@@ -40,13 +51,13 @@ export class AuthService {
     return { user, token };
   }
 
-  async login(data: any): Promise<{ user: UserResponse; token: string }> {
+  async login(data: LoginInput): Promise<{ user: UserResponse; token: string }> {
     const user = await prisma.user.findUnique({
       where: { email: data.email },
     });
 
     if (!user || !user.isActive) {
-      const error: any = new Error('Invalid credentials');
+      const error = new Error('Invalid credentials') as any;
       error.statusCode = 401;
       error.code = 'INVALID_CREDENTIALS';
       throw error;
@@ -55,7 +66,7 @@ export class AuthService {
     const isMatch = await comparePassword(data.password, user.password);
 
     if (!isMatch) {
-      const error: any = new Error('Invalid credentials');
+      const error = new Error('Invalid credentials') as any;
       error.statusCode = 401;
       error.code = 'INVALID_CREDENTIALS';
       throw error;

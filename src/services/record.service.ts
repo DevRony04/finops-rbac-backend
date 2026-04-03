@@ -1,9 +1,27 @@
 import { prisma } from '../config/database';
-import { Record } from '@prisma/client';
+import { Record as PrismaRecord, RecordType } from '@prisma/client';
 import { RecordFilters } from '../types/record.types';
 
+export interface CreateRecordInput {
+  amount: number;
+  type: RecordType;
+  category: string;
+  description?: string;
+  date: string | Date;
+  userId: string;
+}
+
+export interface UpdateRecordInput {
+  amount?: number;
+  type?: RecordType;
+  category?: string;
+  description?: string;
+  date?: string | Date;
+  userId?: string;
+}
+
 export class RecordService {
-  async createRecord(data: any): Promise<Record> {
+  async createRecord(data: CreateRecordInput): Promise<PrismaRecord> {
     return prisma.record.create({
       data: {
         ...data,
@@ -12,8 +30,13 @@ export class RecordService {
     });
   }
 
-  async getRecords(filters: RecordFilters, requesterId: string, isAdmin: boolean): Promise<Record[]> {
-    const where: any = {};
+  async getRecords(filters: RecordFilters, requesterId: string, isAdmin: boolean): Promise<PrismaRecord[]> {
+    const where: {
+      userId?: string;
+      category?: string;
+      type?: RecordType;
+      date?: { gte?: Date; lte?: Date };
+    } = {};
 
     if (!isAdmin) {
       where.userId = requesterId;
@@ -46,7 +69,7 @@ export class RecordService {
     });
   }
 
-  async getRecordById(id: string, requesterId: string, isAdmin: boolean): Promise<Record> {
+  async getRecordById(id: string, requesterId: string, isAdmin: boolean): Promise<PrismaRecord> {
     const record = await prisma.record.findUnique({
       where: { id },
       include: {
@@ -55,14 +78,14 @@ export class RecordService {
     });
 
     if (!record) {
-      const error: any = new Error('Record not found');
+      const error = new Error('Record not found') as any;
       error.statusCode = 404;
       error.code = 'NOT_FOUND';
       throw error;
     }
 
     if (!isAdmin && record.userId !== requesterId) {
-      const error: any = new Error('Forbidden');
+      const error = new Error('Forbidden') as any;
       error.statusCode = 403;
       error.code = 'FORBIDDEN';
       throw error;
@@ -71,15 +94,15 @@ export class RecordService {
     return record;
   }
 
-  async updateRecord(id: string, data: any): Promise<Record> {
+  async updateRecord(id: string, data: UpdateRecordInput): Promise<PrismaRecord> {
     const existing = await prisma.record.findUnique({ where: { id } });
     if (!existing) {
-      const error: any = new Error('Record not found');
+      const error = new Error('Record not found') as any;
       error.statusCode = 404;
       throw error;
     }
 
-    const updateData = { ...data };
+    const updateData: any = { ...data };
     if (updateData.date) {
       updateData.date = new Date(updateData.date);
     }
@@ -93,7 +116,7 @@ export class RecordService {
   async deleteRecord(id: string): Promise<void> {
     const existing = await prisma.record.findUnique({ where: { id } });
     if (!existing) {
-      const error: any = new Error('Record not found');
+      const error = new Error('Record not found') as any;
       error.statusCode = 404;
       throw error;
     }

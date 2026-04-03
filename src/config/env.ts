@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables from .env file
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string().default('3000'),
