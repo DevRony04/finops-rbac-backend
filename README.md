@@ -1,6 +1,6 @@
-# 💼 Finance Data Processing and Access Control Backend
+# 💰 Finance Data Processing and Access Control Backend
 
-AA scalable and production-ready Node.js + Express backend for financial data processing, featuring robust role-based access control (RBAC), secure authentication, and modular architecture.
+A scalable and production-ready Node.js + Express backend for financial data processing, featuring robust role-based access control (RBAC), secure authentication, and modular architecture.
 
 ## 🛠️ Tech Stack
 - **Framework:** Node.js, Express.js
