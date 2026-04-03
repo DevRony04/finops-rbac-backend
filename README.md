@@ -2,7 +2,7 @@
 
 A complete Node.js + Express.js backend system for processing financial data with robust role-based access control (RBAC).
 
-## Tech Stack
+## 🛠️ Tech Stack
 - **Framework:** Node.js, Express.js
 - **Language:** TypeScript
 - **Database:** PostgreSQL
@@ -11,7 +11,7 @@ A complete Node.js + Express.js backend system for processing financial data wit
 - **Validation:** Zod
 - **Security:** Helmet, CORS, express-rate-limit
 
-## Roles & Access Matrix
+## 🔐 Roles & Access Matrix
 
 | Feature | VIEWER | ANALYST | ADMIN |
 |---|---|---|---|
@@ -26,7 +26,7 @@ A complete Node.js + Express.js backend system for processing financial data wit
 
 *(Note: In this specific implementation, only Admin can create or mutate any records, following the strict strictures inside the assignments)*
 
-## Setup Instructions
+## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
 ```bash
@@ -96,7 +96,7 @@ You can use the seeded users to test different RBAC levels on the API endpoints.
 }
 ```
 
-## API Documentation
+## 🛣️ API Documentation
 
 Responses generally follow this format:
 
@@ -205,3 +205,11 @@ curl -X GET http://localhost:3000/api/dashboard/summary \
 curl -X GET 'http://localhost:3000/api/records?type=EXPENSE&category=Food' \
   -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
 ```
+## 📜 License :->
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+- Deepyaman Mondal
+- Backend / Software Engineer
