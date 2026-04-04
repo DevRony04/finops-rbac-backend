@@ -44,6 +44,16 @@ app.use('/api', apiRoutes);
 // Swagger Documentation
 setupSwagger(app);
 
+// Root route
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    message: 'Welcome to Finance Access Control API',
+    version: '1.0.0',
+    documentation: '/api-docs',
+    health: '/health'
+  });
+});
+
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
