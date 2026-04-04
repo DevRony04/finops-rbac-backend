@@ -14,7 +14,7 @@ A production-grade financial data management system built with a **Security-Firs
 
 The API is fully deployed and can be accessed at the following endpoints:
 
-- **🏠 API Root:** [https://finops-rbac-backend.onrender.com/](https://finops-rbac-backend.onrender.com/)
+- **🏠 API Root:** [https://finops-rbac-backend.onrender.com/](https://finops-rbac-backend.onrender.com)
 - **📚 Interactive API Docs:** [https://finops-rbac-backend.onrender.com/api-docs](https://finops-rbac-backend.onrender.com/api-docs)
 
 ---
