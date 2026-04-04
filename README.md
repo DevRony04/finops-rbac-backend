@@ -19,89 +19,80 @@ The API is fully deployed and can be accessed at the following endpoints:
 
 ---
 
-## 🏗️ Technical Architecture
+## 🏗️ System Architecture
 
-This project follows a clean, modular architecture designed for scalability and maintainability:
-
-- **Core Engine:** Node.js & Express.js with TypeScript for end-to-end type safety.
-- **Database Layer:** PostgreSQL hosted on Neon (Serverless Postgres).
-- **ORM:** Prisma for type-safe database queries and automated migrations.
-- **Security:** 
-  - **JWT Authentication:** Secure stateless session management.
-  - **RBAC Matrix:** Custom middleware for multi-level permission gating.
-  - **Data Integrity:** Schema-level validation using **Zod**.
-  - **Protective Layers:** Helmet (headers), CORS (origin control), and Rate Limiting (DoS protection).
+```mermaid
+graph LR
+    A[Client] --> B[Express Server]
+    B --> C{Middleware}
+    C -->|Authentication| D[JWT Validator]
+    C -->|Authorization| E[RBAC Guard]
+    D --> F[Services]
+    E --> F
+    F --> G[Prisma ORM]
+    G --> H[(PostgreSQL / Neon)]
+```
 
 ---
 
-## 🔐 Access Control Matrix
+## 🔑 Test Credentials
 
-This system implements a strict permission hierarchy governed by three distinct roles:
+Use these accounts to test the different access levels (RBAC) in the system:
 
-| Module | Feature | VIEWER | ANALYST | ADMIN |
-| :--- | :--- | :---: | :---: | :---: |
-| **Dashboard** | View Summary Stats | ✅ | ✅ | ✅ |
-| **Analytics** | View Trends & Categories | ❌ | ✅ | ✅ |
-| **Records** | Read Personal Records | ✅ | ✅ | ✅ |
-| **Records** | Read ALL Records | ❌ | ❌ | ✅ |
-| **Records** | Create/Update/Delete | ❌ | ❌ | ✅ |
-| **Users** | Full User Management | ❌ | ❌ | ✅ |
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Admin** | `admin@example.com` | `Password123!` |
+| **Analyst** | `analyst@example.com` | `Password123!` |
+| **Viewer** | `viewer@example.com` | `Password123!` |
+
+---
+
+## 🔄 How to Use (API Flow)
+
+1. **Login**: Send a `POST` request to `/api/auth/login` with your credentials.
+2. **Get Token**: Copy the `token` from the JSON response.
+3. **Authorize**: 
+   - Open **Swagger UI** (`/api-docs`).
+   - Click the **"Authorize"** button.
+   - Enter your token as: `Bearer <your_token_here>`.
+4. **Access**: You can now test protected routes based on your character's role!
+
+---
+
+## 📌 Key Endpoints
+
+### Authentication
+- `POST /api/auth/login` - Get access token
+- `POST /api/auth/register` - Create new account (Default: VIEWER)
+
+### Financial Records
+- `GET /api/records` - List records (Role-filtered)
+- `POST /api/records` - Create new record (**Admin Only**)
+- `PATCH /api/records/:id` - Update record (**Admin Only**)
+
+### Dashboard & Analytics
+- `GET /api/dashboard/summary` - High-level totals (All Roles)
+- `GET /api/dashboard/trends` - Monthly growth charts (**Analyst/Admin**)
+- `GET /api/dashboard/categories` - Spending breakdown (**Analyst/Admin**)
 
 ---
 
 ## ⚙️ Local Development Setup
 
-### 1. Requirements
-- Node.js (v18+)
-- PostgreSQL (Local or Docker)
-
-### 2. Installation
 ```bash
-# Clone and enter the repository
-git clone https://github.com/DevRony04/finops-rbac-backend.git
-cd finops-rbac-backend
-
-# Install dependencies
+# 1. Install dependencies
 npm install
-```
 
-### 3. Environment Configuration
-Create a `.env` file from the example:
-```bash
-cp .env.example .env
-```
-Update your `.env` with your `DATABASE_URL` and a strong `JWT_SECRET`.
-
-### 4. Database Initialization
-```bash
-# Generate Prisma Client
+# 2. Sync database schema
 npx prisma generate
-
-# Apply migrations
 npx prisma migrate dev --name init
 
-# Seed the database (Default Users: viewer, analyst, admin)
+# 3. Seed test data
 npx prisma db seed
+
+# 4. Start development server
+npm run dev
 ```
-
-### 5. Running the App
-- **Development:** `npm run dev`
-- **Production:** `npm run build && npm start`
-
----
-
-## ☁️ Deployment (Render + Neon)
-
-### Build Settings
-When deploying to Render, use these settings:
-- **Build Command:** `npm install && npm run build && npx prisma migrate deploy`
-- **Start Command:** `npm start`
-
-### Environment Variables
-Ensure the following are set in your Render dashboard:
-- `DATABASE_URL`: Your Neon connection string.
-- `JWT_SECRET`: A unique secure string.
-- `NODE_ENV`: `production`
 
 ---
 
