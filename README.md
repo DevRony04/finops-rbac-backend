@@ -1,225 +1,117 @@
-# 💰 Finance Data Processing and Access Control Backend
+# 💰 Finance Data Processing & RBAC Backend
 
-A scalable and production-ready Node.js + Express backend for financial data processing, featuring robust role-based access control (RBAC), secure authentication, and modular architecture.
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com/)
 
-## 🛠️ Tech Stack
-- **Framework:** Node.js, Express.js
-- **Language:** TypeScript
-- **Database:** PostgreSQL
-- **ORM:** Prisma
-- **Authentication:** JWT, bcrypt
-- **Validation:** Zod
-- **Security:** Helmet, CORS, express-rate-limit
+A production-grade financial data management system built with a **Security-First** mindset. This backend implements a robust **Role-Based Access Control (RBAC)** architecture, ensuring that financial data is processed and accessed only by authorized personnel.
 
-## 🔐 Roles & Access Matrix
+---
 
-| Feature | VIEWER | ANALYST | ADMIN |
-|---|---|---|---|
-| Read Dashboard (Summary) | ✅ | ✅ | ✅ |
-| Read Analytics (Trends/Categories)| ❌ | ✅ | ✅ |
-| Read Own Records | ✅ | ✅ | ✅ |
-| Mutate Own Records | ❌ | ❌ | ❌ |
-| Create Records | ❌ | ❌ | ✅ |
-| Read All Records | ❌ | ❌ | ✅ |
-| Update/Delete Any Record | ❌ | ❌ | ✅ |
-| Manage Users | ❌ | ❌ | ✅ |
+## 🚀 Live Deployment
 
-*(Note: In this specific implementation, only Admin can create or mutate any records, following the strict strictures inside the assignments)*
+The API is fully deployed and can be accessed at the following endpoints:
 
-## ⚙️ Setup Instructions
+- **🏠 API Root:** [https://finops-rbac-backend.onrender.com/](https://finops-rbac-backend.onrender.com/)
+- **📚 Interactive API Docs:** [https://finops-rbac-backend.onrender.com/api-docs](https://finops-rbac-backend.onrender.com/api-docs)
 
-### 1. Clone the repository
+---
+
+## 🏗️ Technical Architecture
+
+This project follows a clean, modular architecture designed for scalability and maintainability:
+
+- **Core Engine:** Node.js & Express.js with TypeScript for end-to-end type safety.
+- **Database Layer:** PostgreSQL hosted on Neon (Serverless Postgres).
+- **ORM:** Prisma for type-safe database queries and automated migrations.
+- **Security:** 
+  - **JWT Authentication:** Secure stateless session management.
+  - **RBAC Matrix:** Custom middleware for multi-level permission gating.
+  - **Data Integrity:** Schema-level validation using **Zod**.
+  - **Protective Layers:** Helmet (headers), CORS (origin control), and Rate Limiting (DoS protection).
+
+---
+
+## 🔐 Access Control Matrix
+
+This system implements a strict permission hierarchy governed by three distinct roles:
+
+| Module | Feature | VIEWER | ANALYST | ADMIN |
+| :--- | :--- | :---: | :---: | :---: |
+| **Dashboard** | View Summary Stats | ✅ | ✅ | ✅ |
+| **Analytics** | View Trends & Categories | ❌ | ✅ | ✅ |
+| **Records** | Read Personal Records | ✅ | ✅ | ✅ |
+| **Records** | Read ALL Records | ❌ | ❌ | ✅ |
+| **Records** | Create/Update/Delete | ❌ | ❌ | ✅ |
+| **Users** | Full User Management | ❌ | ❌ | ✅ |
+
+---
+
+## ⚙️ Local Development Setup
+
+### 1. Requirements
+- Node.js (v18+)
+- PostgreSQL (Local or Docker)
+
+### 2. Installation
 ```bash
-git clone <repository_url>
-cd finance-access-control-backend
-```
+# Clone and enter the repository
+git clone https://github.com/DevRony04/finops-rbac-backend.git
+cd finops-rbac-backend
 
-### 2. Install Dependencies
-```bash
+# Install dependencies
 npm install
 ```
 
-### 3. Setup Environment Variables
-Copy `.env.example` to `.env`. Ensure your PostgreSQL configurations match your local or docker setups.
+### 3. Environment Configuration
+Create a `.env` file from the example:
 ```bash
 cp .env.example .env
 ```
+Update your `.env` with your `DATABASE_URL` and a strong `JWT_SECRET`.
 
-Environment Variables Explaination:
-- `PORT`: The port the server will run on (e.g. 3000)
-- `NODE_ENV`: Application environment (`development`, `production`, `test`)
-- `DATABASE_URL`: Connection string to your PostgreSQL instance.
-- `JWT_SECRET`: Secret key used for JWT signing and verification. Needs to be at least 10 chars.
-- `JWT_EXPIRES_IN`: JWT expiration time (e.g. `7d`, `24h`)
-
-### 4. Setup Database
-You can spin up a PostgreSQL instance quickly using docker-compose:
+### 4. Database Initialization
 ```bash
-docker-compose up -d
+# Generate Prisma Client
+npx prisma generate
+
+# Apply migrations
+npx prisma migrate dev --name init
+
+# Seed the database (Default Users: viewer, analyst, admin)
+npx prisma db seed
 ```
 
-Apply migrations to initialize the database schema:
-```bash
-npm run prisma:migrate
-```
+### 5. Running the App
+- **Development:** `npm run dev`
+- **Production:** `npm run build && npm start`
 
-### 5. Seed the Database
-Populate the database with sample users and records:
-```bash
-npm run prisma:seed
-```
-This generates 3 users:
-- `viewer@example.com` (password: `Password123!`)
-- `analyst@example.com` (password: `Password123!`)
-- `admin@example.com` (password: `Password123!`)
+---
 
-### 6. Run the Application
-For development:
-```bash
-npm run dev
-```
+## ☁️ Deployment (Render + Neon)
 
-For production:
-```bash
-npm run build
-npm start
-```
+### Build Settings
+When deploying to Render, use these settings:
+- **Build Command:** `npm install && npm run build && npx prisma migrate deploy`
+- **Start Command:** `npm start`
 
-## Testing Credentials
+### Environment Variables
+Ensure the following are set in your Render dashboard:
+- `DATABASE_URL`: Your Neon connection string.
+- `JWT_SECRET`: A unique secure string.
+- `NODE_ENV`: `production`
 
-You can use the seeded users to test different RBAC levels on the API endpoints.
-
-```json
-{
-  "email": "admin@example.com",
-  "password": "Password123!"
-}
-```
-
-## 📚 Interactive API Documentation (Swagger)
-
-This project includes interactive API documentation powered by Swagger UI.
-
-Once the server is running, you can access the interactive Swagger documentation at:
-- **Swagger UI:** `http://localhost:3000/api-docs`
-- **Swagger JSON:** `http://localhost:3000/api-docs.json`
-
-You can use the Swagger UI to explore the available endpoints, view schemas, and test API requests directly from your browser. Remember to authenticate by clicking the "Authorize" button and providing your JWT bearer token.
-
-## 🛣️ API Documentation
-
-Responses generally follow this format:
-
-**Success Response:**
-```json
-{
-  "success": true,
-  "data": { ... },
-  "message": "Optional success message"
-}
-```
-
-**Error Response:**
-```json
-{
-  "success": false,
-  "error": {
-    "message": "Error description",
-    "code": "ERROR_CODE",
-    "details": [] 
-  }
-}
-```
-
-### Auth Endpoints
-
-#### POST `/api/auth/register`
-Register a new user (defaults to VIEWER role). Can be accessed publicly.
-- **Body Context:** `email`, `password`, `name`
-
-#### POST `/api/auth/login`
-Authentication point to retrieve JWT.
-- **Body Context:** `email`, `password`
-
-#### GET `/api/auth/me`
-Retrieve currently logged in user context based on JWT. Requires Auth.
-
-### User Endpoints (Admin Only)
-
-#### GET `/api/users`
-List all users.
-
-#### POST `/api/users`
-Create a new user with a specific role.
-
-#### GET `/api/users/:id`
-Get specific user profile.
-
-#### PATCH `/api/users/:id`
-Update a specific user profile or role/isActive status.
-
-#### DELETE `/api/users/:id`
-Delete a specific user.
-
-### Record Endpoints
-
-#### GET `/api/records`
-Get records base on queries limit. If requester is Admin, can read all. Otherwise only requester's own records.
-- **Query Params:** `startDate`, `endDate`, `category`, `type`
-
-#### GET `/api/records/:id`
-Get specific records details. Follows similar role gating.
-
-#### POST `/api/records` (Admin Only)
-Create new record manually for some user context.
-- **Body Context:** `amount`, `type`, `category`, `date`, `description`, `userId`
-
-#### PATCH `/api/records/:id` (Admin Only)
-Update record parameters.
-
-#### DELETE `/api/records/:id` (Admin Only)
-Delete specific record.
-
-### Dashboard Endpoints
-
-#### GET `/api/dashboard/summary` (All Roles)
-Get totally income, expense, net balance aggregation sum.
-
-#### GET `/api/dashboard/trends` (Analyst, Admin)
-Get monthly aggregations (trends over the last months).
-
-#### GET `/api/dashboard/categories` (Analyst, Admin)
-Get aggregates partitioned by item categories.
-
-#### GET `/api/dashboard/recent` (All Roles)
-Returns latest 10 transactional datasets.
-- **Query Params:** `limit` - control how many lines returned.
-
-## Curl Examples
-
-**1. Login to get a token**
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"Password123!"}'
-```
-
-**2. Access Summary Dashboard**
-```bash
-curl -X GET http://localhost:3000/api/dashboard/summary \
-  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
-```
-
-**3. Filter financial records**
-```bash
-curl -X GET 'http://localhost:3000/api/records?type=EXPENSE&category=Food' \
-  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
-```
-## 📜 License :->
-
-This project is licensed under the MIT License.
+---
 
 ## 👨‍💻 Author
 
-- Deepyaman Mondal
-- Backend / Software Engineer
+**Deepyaman Mondal**  
+*Backend / Software Engineer*
+
+- **GitHub:** [@DevRony04](https://github.com/DevRony04)
+- **Status:** Production Ready
+
+---
+*License: This project is licensed under the MIT License.*
