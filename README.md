@@ -96,6 +96,35 @@ npm run dev
 
 ---
 
+## 🧪 Testing
+
+This project includes a comprehensive suite of **Pure logic Unit Tests**.
+
+### Key Features:
+- **Database-Independent:** No database connection or Prisma setup required.
+- **Fast Execution:** 20+ tests run in under 3 seconds.
+- **Production Safe:** Tests use `devDependencies` only and are excluded from the production build.
+
+### Running Tests:
+```bash
+# 1. Run all tests
+npm test
+
+# 2. Run with coverage report
+npm run test:coverage
+
+# 3. Watch mode (for development)
+npm run test:watch
+```
+
+### What's Tested:
+- **Validation:** Password strength, email formats, and amount rules.
+- **RBAC:** Hierarchical permission logic for ADMIN, ANALYST, and VIEWER.
+- **Calculations:** Financial summaries, totals, and net balance logic.
+- **Utils:** Date range filtering, category sorting, and data sanitization.
+
+---
+
 ## 👨‍💻 Author
 
 **Deepyaman Mondal**  
