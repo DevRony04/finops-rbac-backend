@@ -25,7 +25,12 @@ const options: swaggerJSDoc.Options = {
       },
     ],
   },
-  apis: ['./src/routes/*.ts', './src/controllers/*.ts'], // Use wildcards for routes and controllers
+  apis: [
+    './src/routes/*.ts',
+    './src/controllers/*.ts',
+    './dist/routes/*.js',       // required for Render
+    './dist/controllers/*.js',  // required for Render
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
