@@ -10,8 +10,11 @@ const router = Router();
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register new user
- *     description: Create a new user account (Default role - VIEWER)
+ *     summary: Register a new user account
+ *     description: |
+ *       Creates a new user in the system. 
+ *       - **Default Role**: `VIEWER`
+ *       - **Password Policy**: Minimum 8 characters.
  *     tags: [Authentication]
  *     security: []
  *     requestBody:
@@ -22,9 +25,27 @@ const router = Router();
  *             $ref: '#/components/schemas/RegisterRequest'
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: User successfully registered.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: 'boolean', example: true }
+ *                 message: { type: 'string', example: 'User registered successfully' }
+ *                 data:
+ *                   $ref: '#/components/schemas/LoginResponse'
  *       400:
- *         description: Validation error or user already exists
+ *         description: Invalid input data or email already in use.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               success: false
+ *               error:
+ *                 message: "User with this email already exists"
+ *                 code: "USER_EXISTS"
  */
 router.post('/register', validate(registerSchema), register);
 
@@ -32,8 +53,10 @@ router.post('/register', validate(registerSchema), register);
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: User login
- *     description: Authenticate user and receive JWT token
+ *     summary: Authenticate user and obtain JWT
+ *     description: |
+ *       Validates user credentials and returns a Bearer token for protected resources.
+ *       Tokens are valid for 24 hours.
  *     tags: [Authentication]
  *     security: []
  *     requestBody:
@@ -44,13 +67,22 @@ router.post('/register', validate(registerSchema), register);
  *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Authentication successful.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
  *       401:
- *         description: Invalid credentials
+ *         description: Invalid email or password.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               success: false
+ *               error:
+ *                 message: "Invalid credentials"
+ *                 code: "UNAUTHORIZED"
  */
 router.post('/login', validate(loginSchema), login);
 
@@ -58,16 +90,28 @@ router.post('/login', validate(loginSchema), login);
  * @swagger
  * /api/auth/me:
  *   get:
- *     summary: Get current user profile
- *     description: Retrieve details of the currently authenticated user
+ *     summary: Retrieve current session profile
+ *     description: Returns the profile data of the currently authenticated user based on the JWT token.
  *     tags: [Authentication]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile retrieved successfully
+ *         description: Profile data retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: 'boolean', example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/FinancialRecord/properties/userId'
  *       401:
- *         description: Unauthorized
+ *         description: Invalid or expired Bearer token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/me', authenticate, getMe);
 
