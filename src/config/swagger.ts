@@ -11,7 +11,7 @@ const options: swaggerJSDoc.Options = {
       description: 'A production-grade financial data management system with Role-Based Access Control (RBAC)',
       contact: {
         name: 'Deepyaman Mondal',
-        url: 'https://github.com/DevRony04',
+        url: 'https://rony-portfolio-site.vercel.app',
       },
       license: {
         name: 'MIT',
@@ -162,7 +162,7 @@ export const setupSwagger = (app: Express) => {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'Finance RBAC API Documentation',
   }));
-  
+
   app.get('/api-docs.json', (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
