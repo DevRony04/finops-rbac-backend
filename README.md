@@ -1,4 +1,4 @@
-# 💰 Finance Data Processing & RBAC Backend
+# 💰 Finance Data Processing and Access Control Backend
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -21,17 +21,29 @@ The API is fully deployed and can be accessed at the following endpoints:
 
 ## 🏗️ System Architecture
 
+This project follows a **Layered Architecture** (Controller-Service-Repository pattern) to ensure separation of concerns and maintainability.
+
 ```mermaid
-graph LR
+graph TD
     A[Client] --> B[Express Server]
     B --> C{Middleware}
     C -->|Authentication| D[JWT Validator]
     C -->|Authorization| E[RBAC Guard]
-    D --> F[Services]
+    D --> F[Controllers]
     E --> F
-    F --> G[Prisma ORM]
-    G --> H[(PostgreSQL / Neon)]
+    F --> G[Services]
+    G --> H[Prisma ORM]
+    H --> I[(PostgreSQL / Neon)]
 ```
+
+### 📂 Folder Structure
+- `src/config/`: Configuration for Swagger, database, and environmental settings.
+- `src/controllers/`: Request handling and response mapping.
+- `src/services/`: Core business logic and database interactions.
+- `src/routes/`: Route definitions and endpoint mapping.
+- `src/middlewares/`: Authentication, RBAC, and error-handling middleware.
+- `src/validators/`: Request validation using Zod/Joi.
+- `src/types/`: TypeScript interfaces and custom definitions.
 
 ---
 
@@ -47,33 +59,37 @@ Use these accounts to test the different access levels (RBAC) in the system:
 
 ---
 
-## 🔄 How to Use (API Flow)
+## 🛡️ Security Features
 
-1. **Login**: Send a `POST` request to `/api/auth/login` with your credentials.
-2. **Get Token**: Copy the `token` from the JSON response.
-3. **Authorize**: 
-   - Open **Swagger UI** (`/api-docs`).
-   - Click the **"Authorize"** button.
-   - Enter your token as: `Bearer <your_token_here>`.
-4. **Access**: You can now test protected routes based on your character's role!
+Security is baked into the core of this application:
+- **JWT Authentication:** Secure stateless session management.
+- **RBAC (Role-Based Access Control):** Granular permissions for Admin, Analyst, and Viewer roles.
+- **Helmet:** Protects against well-known web vulnerabilities by setting various HTTP headers.
+- **Rate Limiting:** Prevents brute-force attacks and abuse.
+- **CORS:** Controlled access for specific domains.
+- **Zod Validation:** Strict input sanitization for all request bodies and queries.
+- **Bcrypt:** Industry-standard password hashing with high salt rounds.
 
 ---
 
-## 📌 Key Endpoints
+## 🗄️ Database Schema (Prisma)
 
-### Authentication
-- `POST /api/auth/login` - Get access token
-- `POST /api/auth/register` - Create new account (Default: VIEWER)
+The system manages two primary entities via the Prisma ORM:
+- **User:** Handles authentication, credentials, and role assignments (`ADMIN`, `ANALYST`, `VIEWER`).
+- **Record:** Stores financial data including amount, category (`INCOME`, `EXPENSE`), date, and creator association.
 
-### Financial Records
-- `GET /api/records` - List records (Role-filtered)
-- `POST /api/records` - Create new record (**Admin Only**)
-- `PATCH /api/records/:id` - Update record (**Admin Only**)
+---
 
-### Dashboard & Analytics
-- `GET /api/dashboard/summary` - High-level totals (All Roles)
-- `GET /api/dashboard/trends` - Monthly growth charts (**Analyst/Admin**)
-- `GET /api/dashboard/categories` - Spending breakdown (**Analyst/Admin**)
+## 📚 API Documentation (Swagger)
+
+The project includes interactive API documentation powered by Swagger (OpenAPI 3.0).
+- **Endpoint:** `/api-docs`
+- **JSON Spec:** `/api-docs.json`
+
+### Highlights:
+- **Authentication:** Integrated "Authorize" button for JWT Bearer tokens.
+- **Schemas:** Comprehensive models for all requests and responses.
+- **Tags:** Categorized by Authentication, Financial Records, and Dashboard.
 
 ---
 
@@ -100,28 +116,23 @@ npm run dev
 
 This project includes a comprehensive suite of **Pure logic Unit Tests**.
 
-### Key Features:
-- **Database-Independent:** No database connection or Prisma setup required.
-- **Fast Execution:** 20+ tests run in under 3 seconds.
-- **Production Safe:** Tests use `devDependencies` only and are excluded from the production build.
-
 ### Running Tests:
 ```bash
-# 1. Run all tests
+# Run all tests
 npm test
 
-# 2. Run with coverage report
+# Run with coverage report
 npm run test:coverage
 
-# 3. Watch mode (for development)
+# Watch mode (for development)
 npm run test:watch
 ```
 
-### What's Tested:
-- **Validation:** Password strength, email formats, and amount rules.
-- **RBAC:** Hierarchical permission logic for ADMIN, ANALYST, and VIEWER.
-- **Calculations:** Financial summaries, totals, and net balance logic.
-- **Utils:** Date range filtering, category sorting, and data sanitization.
+### Coverage Areas:
+- **Validation:** Password rules, email formats, and amount constraints.
+- **RBAC Permission Logic:** Hierarchical verification for all roles.
+- **Financial Calculations:** Summary statistics and net balance logic.
+- **Utilities:** Date filtering and category-based sorting.
 
 ---
 
