@@ -93,6 +93,40 @@ The project includes interactive API documentation powered by Swagger (OpenAPI 3
 
 ---
 
+## 📥 Example API Request
+
+Here’s an example of creating a financial record using the API:
+
+```http
+POST /api/records
+Content-Type: application/json
+Authorization: Bearer <your_token>
+
+{
+  "amount": 5000,
+  "type": "INCOME",
+  "category": "Salary",
+  "date": "2025-04-01"
+}
+```
+
+**✅ Example Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "rec_123",
+    "amount": 5000,
+    "type": "INCOME",
+    "category": "Salary",
+    "date": "2025-04-01"
+  }
+}
+```
+
+---
+
 ## ⚙️ Local Development Setup
 
 ```bash
